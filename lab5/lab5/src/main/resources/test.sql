@@ -37,20 +37,6 @@ CREATE TABLE IF NOT EXISTS `Kindrat_Anatolii`.`Position` (
     PRIMARY KEY (`position_id`))
     ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `Kindrat_Anatolii`.`Employees`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Kindrat_Anatolii`.`Employees` (
-    `employee_id` INT NOT NULL,
-    `full_name` VARCHAR(45) NULL,
-    `employee_number` INT NULL,
-    `initial_experience` INT NULL,
-    `hire_date` DATE NULL,
-    PRIMARY KEY (`employee_id`))
-    ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `Kindrat_Anatolii`.`Staffing_table`
 -- -----------------------------------------------------
@@ -74,49 +60,6 @@ CREATE TABLE IF NOT EXISTS `Kindrat_Anatolii`.`Staffing_table` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
     ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Kindrat_Anatolii`.`Appointments`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Kindrat_Anatolii`.`Appointments` (
-    `appointments_id` INT NOT NULL,
-    `fte_share` FLOAT NULL,
-    `personal_bonus` INT NULL,
-    `employee_id` INT NULL,
-    `staffing_id` INT NULL,
-    INDEX `fk_appoiments_employees_idx` (`employee_id` ASC) VISIBLE,
-    INDEX `fk_appoiments_staffing_idx` (`staffing_id` ASC) VISIBLE,
-    PRIMARY KEY (`appointments_id`),
-    CONSTRAINT `fk_appoiments_employees`
-    FOREIGN KEY (`employee_id`)
-    REFERENCES `Kindrat_Anatolii`.`Employees` (`employee_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-    CONSTRAINT `fk_appoiments_staffing`
-    FOREIGN KEY (`staffing_id`)
-    REFERENCES `Kindrat_Anatolii`.`Staffing_table` (`staffing_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-    ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Kindrat_Anatolii`.`Diplomas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Kindrat_Anatolii`.`Diplomas` (
-    `diploma_id` INT NOT NULL,
-    `diploma_number` VARCHAR(45) NULL,
-    `specality` VARCHAR(45) NULL,
-    `employees_id` INT NULL,
-    PRIMARY KEY (`diploma_id`),
-    CONSTRAINT `fk_diplomas_employees`
-    FOREIGN KEY (`employees_id`)
-    REFERENCES `Kindrat_Anatolii`.`Employees` (`employee_id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-    ENGINE = InnoDB;
-
 
 -- ----------------------------------------------
 -- Table `Kindrat_Anatolii`.`Users`
@@ -154,7 +97,6 @@ INSERT INTO `Kindrat_Anatolii`.`Departaments` (`departament_id`, `departament_na
 
 COMMIT;
 
-
 -- -----------------------------------------------------
 -- Data for table `Kindrat_Anatolii`.`Position`
 -- -----------------------------------------------------
@@ -168,21 +110,6 @@ INSERT INTO `Kindrat_Anatolii`.`Position` (`position_id`, `position_title`, `bas
 
 COMMIT;
 
-
--- -----------------------------------------------------
--- Data for table `Kindrat_Anatolii`.`Employees`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Kindrat_Anatolii`;
-INSERT INTO `Kindrat_Anatolii`.`Employees` (`employee_id`, `full_name`, `employee_number`, `initial_experience`, `hire_date`) VALUES (1, 'Іванщенко Тарас', 1, 0, '2015-10-12');
-INSERT INTO `Kindrat_Anatolii`.`Employees` (`employee_id`, `full_name`, `employee_number`, `initial_experience`, `hire_date`) VALUES (2, 'Кривоніс Сергій', 25, 5, '2013-10-12');
-INSERT INTO `Kindrat_Anatolii`.`Employees` (`employee_id`, `full_name`, `employee_number`, `initial_experience`, `hire_date`) VALUES (3, 'Галущенко Максим', 33, 10, '2015-11-12');
-INSERT INTO `Kindrat_Anatolii`.`Employees` (`employee_id`, `full_name`, `employee_number`, `initial_experience`, `hire_date`) VALUES (4, 'Вінник Олег', 26, 6, '2015-10-14');
-INSERT INTO `Kindrat_Anatolii`.`Employees` (`employee_id`, `full_name`, `employee_number`, `initial_experience`, `hire_date`) VALUES (5, 'Чмут Тарас', 14, 3, '2010-12-12');
-
-COMMIT;
-
-
 -- -----------------------------------------------------
 -- Data for table `Kindrat_Anatolii`.`Staffing_table`
 -- -----------------------------------------------------
@@ -193,34 +120,6 @@ INSERT INTO `Kindrat_Anatolii`.`Staffing_table` (`staffing_id`, `total_slots`, `
 INSERT INTO `Kindrat_Anatolii`.`Staffing_table` (`staffing_id`, `total_slots`, `vacant_slots`, `departament_id`, `position_id`) VALUES (3, 5, 2, 3, 3);
 INSERT INTO `Kindrat_Anatolii`.`Staffing_table` (`staffing_id`, `total_slots`, `vacant_slots`, `departament_id`, `position_id`) VALUES (4, 10, 3, 4, 4);
 INSERT INTO `Kindrat_Anatolii`.`Staffing_table` (`staffing_id`, `total_slots`, `vacant_slots`, `departament_id`, `position_id`) VALUES (5, 2, 0, 5, 5);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Kindrat_Anatolii`.`Diplomas`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Kindrat_Anatolii`;
-INSERT INTO `Kindrat_Anatolii`.`Diplomas` (`diploma_id`, `diploma_number`, `specality`, `employees_id`) VALUES (1, 'КВ №123456', 'Менеджмент', 1);
-INSERT INTO `Kindrat_Anatolii`.`Diplomas` (`diploma_id`, `diploma_number`, `specality`, `employees_id`) VALUES (2, 'СВ №654321', 'Фінанси і кредит', 2);
-INSERT INTO `Kindrat_Anatolii`.`Diplomas` (`diploma_id`, `diploma_number`, `specality`, `employees_id`) VALUES (3, 'АА №112233', 'Комп\'ютерна інженерія', 3);
-INSERT INTO `Kindrat_Anatolii`.`Diplomas` (`diploma_id`, `diploma_number`, `specality`, `employees_id`) VALUES (4, 'МВ №998877', 'Маркетинг', 4);
-INSERT INTO `Kindrat_Anatolii`.`Diplomas` (`diploma_id`, `diploma_number`, `specality`, `employees_id`) VALUES (5, 'РВ №445566', 'Управління персоналом', 5);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Kindrat_Anatolii`.`Appointments`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Kindrat_Anatolii`;
-INSERT INTO `Kindrat_Anatolii`.`Appointments` (`appointments_id`, `fte_share`, `personal_bonus`, `employee_id`, `staffing_id`) VALUES (1, 1, 5000, 1, 1);
-INSERT INTO `Kindrat_Anatolii`.`Appointments` (`appointments_id`, `fte_share`, `personal_bonus`, `employee_id`, `staffing_id`) VALUES (2, 1, 2000, 2, 2);
-INSERT INTO `Kindrat_Anatolii`.`Appointments` (`appointments_id`, `fte_share`, `personal_bonus`, `employee_id`, `staffing_id`) VALUES (3, 1, 3000, 3, 3);
-INSERT INTO `Kindrat_Anatolii`.`Appointments` (`appointments_id`, `fte_share`, `personal_bonus`, `employee_id`, `staffing_id`) VALUES (4, 0.5, 0, 4, 4);
-INSERT INTO `Kindrat_Anatolii`.`Appointments` (`appointments_id`, `fte_share`, `personal_bonus`, `employee_id`, `staffing_id`) VALUES (5, 1, 1500, 5, 5);
 
 COMMIT;
 

@@ -1,11 +1,17 @@
 package org.example;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 import java.util.Scanner;
 
+import static com.mysql.cj.conf.PropertyKey.PASSWORD;
+
 public class Main {
-    private static final String URL = "jdbc:mysql://localhost:3306/Kindrat_Anatolii";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "25102006";
+    private static final Properties properties = new Properties();
+    private static String URL;
+    private static String USERNAME;
+    private static String PASSWORD;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -15,6 +21,15 @@ public class Main {
 
         System.out.print("Введіть пароль: ");
         String password = scanner.nextLine();
+
+        try (FileInputStream in = new FileInputStream("resources//config.properties")) {
+            properties.load(in);
+            String URL = properties.getProperty("db.URL");
+            String USERNAME = properties.getProperty("db.USERNAME");
+            String PASSWORD = properties.getProperty("db.PASSWORD");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
 
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             if (connection != null && !connection.isClosed()) {
