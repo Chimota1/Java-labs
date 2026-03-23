@@ -80,7 +80,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- New User
 -- ---------------------------------------------------
 
-CREATE USER 'user1'@'localhost' IDENTIFIED BY '1234';
+CREATE USER IF NOT EXISTS 'user1'@'localhost' IDENTIFIED BY '1234';
 GRANT ALL PRIVILEGES ON `Kindrat_Anatolii`.* TO 'user1'@'localhost';
 FLUSH PRIVILEGES;
 
