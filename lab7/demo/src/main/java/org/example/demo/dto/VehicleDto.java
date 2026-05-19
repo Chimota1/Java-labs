@@ -1,29 +1,26 @@
-package org.example.demo.model;
+package org.example.demo.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "vehicles")
-public class Vehicle {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class VehicleDto {
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Марка авто обов'язкова")
     private String make;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Модель авто обов'язкова")
     private String model;
 
-    @Column(name = "license_plate", nullable = false, unique = true)
+    @NotBlank(message = "Номерний знак обов'язковий")
     private String licensePlate;
 
-    @Column(name = "manufacture_year")
+    @NotNull(message = "Рік випуску обов'язковий")
+    @Min(value = 1900, message = "Рік випуску не може бути меншим за 1900")
     private Integer manufactureYear;
 
     private String status;
-
-    public Vehicle() {}
 
     // Геттери та Сеттери
     public Long getId() { return id; }

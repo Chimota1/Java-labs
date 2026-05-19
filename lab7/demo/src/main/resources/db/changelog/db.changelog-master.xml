@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="1" author="anatolii">
+        <createTable tableName="drivers">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="license_number" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="category" type="VARCHAR(10)"/>
+            <column name="status" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="anatolii">
+        <createTable tableName="vehicles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="make" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="license_plate" type="VARCHAR(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="manufacture_year" type="INT"/>
+            <column name="status" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="anatolii">
+        <createTable tableName="trips">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="route" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="driver_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vehicle_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="distance" type="INT"/>
+            <column name="status" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="4" author="anatolii">
+        <createTable tableName="maintenances">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="vehicle_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cost" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="5" author="anatolii">
+        <createTable tableName="fuel_logs">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="vehicle_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="liters" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price_per_liter" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="refuel_date" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,27 +1,24 @@
-package org.example.demo.model;
+package org.example.demo.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "maintenances")
-public class Maintenance {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MaintenanceDto {
     private Long id;
 
-    @Column(name = "vehicle_id", nullable = false)
+    @NotNull(message = "ID автомобіля обов'язкове")
     private Long vehicleId;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Опис робіт обов'язковий")
     private String description;
 
-    @Column(nullable = false)
+    @NotNull(message = "Вартість обов'язкова")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Вартість не може бути від'ємною")
     private BigDecimal cost;
 
     private String status;
-
-    public Maintenance() {}
 
     // Геттери та Сеттери
     public Long getId() { return id; }

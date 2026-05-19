@@ -1,29 +1,25 @@
-package org.example.demo.model;
+package org.example.demo.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "trips")
-public class Trip {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TripDto {
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Маршрут обов'язковий")
     private String route;
 
-    @Column(name = "driver_id", nullable = false)
+    @NotNull(message = "ID водія обов'язкове")
     private Long driverId;
 
-    @Column(name = "vehicle_id", nullable = false)
+    @NotNull(message = "ID автомобіля обов'язкове")
     private Long vehicleId;
 
-    @Column(name = "distance")
+    @Min(value = 1, message = "Дистанція має бути більшою за 0")
     private Integer distance;
 
     private String status;
-
-    public Trip() {}
 
     // Геттери та Сеттери
     public Long getId() { return id; }

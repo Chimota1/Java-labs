@@ -1,25 +1,23 @@
-package org.example.demo.model;
+package org.example.demo.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "drivers")
-public class Driver {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DriverDto {
     private Long id;
 
-    @Column(name = "full_name", nullable = false)
+    @NotBlank(message = "Ім'я не може бути порожнім")
     private String fullName;
 
-    @Column(name = "license_number", nullable = false, unique = true)
+    @NotBlank(message = "Номер ліцензії обов'язковий")
     private String licenseNumber;
 
+    @NotNull
     private String category;
+
     private String status;
 
-    public Driver() {}
-    // Конструктор, геттери та сеттери залишаються такими ж, як у твоєму коді [cite: 4, 5, 6, 7]
+    // Додай геттери та сеттери
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getFullName() { return fullName; }

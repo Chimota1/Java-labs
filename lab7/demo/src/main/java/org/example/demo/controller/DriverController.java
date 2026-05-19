@@ -1,6 +1,7 @@
 package org.example.demo.controller;
 
-import org.example.demo.model.Driver;
+import jakarta.validation.Valid;
+import org.example.demo.dto.DriverDto;
 import org.example.demo.service.DriverService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,37 +13,42 @@ import java.util.List;
 public class DriverController {
     private final DriverService service;
 
-    public DriverController(DriverService service) { this.service = service; }
+    public DriverController(DriverService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Driver> getAll() { return service.getAll(); }
+    public List<DriverDto> getAll() {
+        return service.getAll();
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Driver> getById(@PathVariable Long id) {
+    public ResponseEntity<DriverDto> getById(@PathVariable Long id) {
         return service.getById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Driver> create(@RequestBody Driver driver) {
-        return ResponseEntity.status(201).body(service.create(driver));
+    public ResponseEntity<DriverDto> create(@Valid @RequestBody DriverDto driverDto) {
+        return ResponseEntity.status(201).body(service.create(driverDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Driver> update(@PathVariable Long id, @RequestBody Driver driver) {
-        return service.update(id, driver).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Driver> patch(@PathVariable Long id, @RequestBody Driver driver) {
-        return service.patch(id, driver).map(ResponseEntity::ok)
+    public ResponseEntity<DriverDto> update(@PathVariable Long id, @Valid @RequestBody DriverDto driverDto) {
+        return service.update(id, driverDto).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.delete(id) ? ResponseEntity.noContent().build()
+        return service.delete(id) ?
+                ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    // Новий ендпоінт для перевірки JdbcTemplate
+    @GetMapping("/category/{category}")
+    public List<DriverDto> getByCategory(@PathVariable String category) {
+        return service.getByCategoryViaJdbc(category);
     }
 }

@@ -1,28 +1,27 @@
-package org.example.demo.model;
+package org.example.demo.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "fuel_logs")
-public class FuelLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FuelLogDto {
     private Long id;
 
-    @Column(name = "vehicle_id", nullable = false)
+    @NotNull(message = "ID автомобіля обов'язкове")
     private Long vehicleId;
 
-    @Column(nullable = false)
+    @NotNull(message = "Кількість літрів обов'язкова")
+    @Positive(message = "Кількість літрів має бути більшою за 0")
     private Double liters;
 
-    @Column(name = "price_per_liter", nullable = false)
+    @NotNull(message = "Ціна за літр обов'язкова")
+    @DecimalMin(value = "0.01", message = "Ціна має бути більшою за 0")
     private BigDecimal pricePerLiter;
 
-    @Column(name = "refuel_date")
+    @NotBlank(message = "Дата заправки обов'язкова")
     private String refuelDate;
-
-    public FuelLog() {}
 
     // Геттери та Сеттери
     public Long getId() { return id; }

@@ -1,6 +1,7 @@
 package org.example.demo.controller;
 
-import org.example.demo.model.Vehicle;
+import jakarta.validation.Valid;
+import org.example.demo.dto.VehicleDto;
 import org.example.demo.service.VehicleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,41 +13,41 @@ import java.util.List;
 public class VehicleController {
     private final VehicleService service;
 
-    public VehicleController(VehicleService service) { this.service = service; }
+    public VehicleController(VehicleService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<Vehicle> getAll() { return service.getAll(); }
+    public List<VehicleDto> getAll() {
+        return service.getAll();
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicle> getById(@PathVariable Long id) {
-        return service.getById(id)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<VehicleDto> getById(@PathVariable Long id) {
+        return service.getById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Vehicle> create(@RequestBody Vehicle vehicle) {
-        return ResponseEntity.status(201).body(service.create(vehicle));
+    public ResponseEntity<VehicleDto> create(@Valid @RequestBody VehicleDto dto) {
+        return ResponseEntity.status(201).body(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicle> update(@PathVariable Long id, @RequestBody Vehicle vehicle) {
-        return service.update(id, vehicle)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Vehicle> patch(@PathVariable Long id, @RequestBody Vehicle vehicle) {
-        return service.patch(id, vehicle)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<VehicleDto> update(@PathVariable Long id, @Valid @RequestBody VehicleDto dto) {
+        return service.update(id, dto).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return service.delete(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        return service.delete(id) ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/make/{make}")
+    public List<VehicleDto> getByMake(@PathVariable String make) {
+        return service.getByMakeViaJdbc(make);
     }
 }
