@@ -2,50 +2,80 @@ package org.example.demo.service;
 
 import org.example.demo.dto.TripDto;
 import org.example.demo.mapper.TripMapper;
+import org.example.demo.model.Driver;
 import org.example.demo.model.Trip;
+import org.example.demo.model.Vehicle;
+import org.example.demo.repository.DriverRepository;
 import org.example.demo.repository.TripRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.example.demo.repository.VehicleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TripService {
     private final TripRepository repository;
-    private final JdbcTemplate jdbcTemplate;
+    private final DriverRepository driverRepository;
+    private final VehicleRepository vehicleRepository;
     private final TripMapper mapper;
 
-    public TripService(TripRepository repository, JdbcTemplate jdbcTemplate, TripMapper mapper) {
+    public TripService(
+            TripRepository repository,
+            DriverRepository driverRepository,
+            VehicleRepository vehicleRepository,
+            TripMapper mapper
+    ) {
         this.repository = repository;
-        this.jdbcTemplate = jdbcTemplate;
+        this.driverRepository = driverRepository;
+        this.vehicleRepository = vehicleRepository;
         this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<TripDto> getAll() {
-        return repository.findAll().stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Optional<TripDto> getById(Long id) {
         return repository.findById(id).map(mapper::toDto);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public TripDto create(TripDto dto) {
+        Driver driver = driverRepository.findById(dto.getDriverId()).orElseThrow();
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId()).orElseThrow();
+
         Trip entity = mapper.toEntity(dto);
+        entity.setDriver(driver);
+        entity.setVehicle(vehicle);
+
         return mapper.toDto(repository.save(entity));
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Optional<TripDto> update(Long id, TripDto updatedDto) {
-        if (!repository.existsById(id)) return Optional.empty();
+        if (!repository.existsById(id)) {
+            return Optional.empty();
+        }
+
+        Driver driver = driverRepository.findById(updatedDto.getDriverId()).orElseThrow();
+        Vehicle vehicle = vehicleRepository.findById(updatedDto.getVehicleId()).orElseThrow();
 
         Trip entity = mapper.toEntity(updatedDto);
         entity.setId(id);
+        entity.setDriver(driver);
+        entity.setVehicle(vehicle);
+
         return Optional.of(mapper.toDto(repository.save(entity)));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean delete(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
@@ -54,23 +84,24 @@ public class TripService {
         return false;
     }
 
-    // Метод через JdbcTemplate (Пошук за статусом)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<TripDto> getByStatusViaJdbc(String status) {
-        String sql = "SELECT * FROM trips WHERE status = ?";
+        return repository.findByStatusWithJoins(status).stream().map(mapper::toDto).toList();
+    }
 
-        List<Trip> trips = jdbcTemplate.query(sql, (rs, rowNum) -> {
-            Trip trip = new Trip();
-            trip.setId(rs.getLong("id"));
-            trip.setRoute(rs.getString("route"));
-            trip.setDriverId(rs.getLong("driver_id"));
-            trip.setVehicleId(rs.getLong("vehicle_id"));
-            trip.setDistance(rs.getInt("distance"));
-            trip.setStatus(rs.getString("status"));
-            return trip;
-        }, status);
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<TripDto> getNPlusOneDemo() {
+        return repository.findAllForNPlusOne().stream().map(mapper::toDto).toList();
+    }
 
-        return trips.stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<TripDto> getOptimizedDemo() {
+        return repository.findAllWithDriverAndVehicle().stream().map(mapper::toDto).toList();
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Page<TripDto> getPagedTrips(Pageable pageable) {
+        return repository.findTripPageDto(pageable);
     }
 }
+

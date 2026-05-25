@@ -12,11 +12,13 @@ public class Trip {
     @Column(nullable = false)
     private String route;
 
-    @Column(name = "driver_id", nullable = false)
-    private Long driverId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "driver_id", nullable = false)
+    private Driver driver;
 
-    @Column(name = "vehicle_id", nullable = false)
-    private Long vehicleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
     @Column(name = "distance")
     private Integer distance;
@@ -25,17 +27,17 @@ public class Trip {
 
     public Trip() {}
 
-    // Геттери та Сеттери
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getRoute() { return route; }
     public void setRoute(String route) { this.route = route; }
-    public Long getDriverId() { return driverId; }
-    public void setDriverId(Long driverId) { this.driverId = driverId; }
-    public Long getVehicleId() { return vehicleId; }
-    public void setVehicleId(Long vehicleId) { this.vehicleId = vehicleId; }
+    public Driver getDriver() { return driver; }
+    public void setDriver(Driver driver) { this.driver = driver; }
+    public Vehicle getVehicle() { return vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
     public Integer getDistance() { return distance; }
     public void setDistance(Integer distance) { this.distance = distance; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }
+

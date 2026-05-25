@@ -3,6 +3,9 @@ package org.example.demo.controller;
 import jakarta.validation.Valid;
 import org.example.demo.dto.TripDto;
 import org.example.demo.service.TripService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,4 +53,20 @@ public class TripController {
     public List<TripDto> getByStatus(@PathVariable String status) {
         return service.getByStatusViaJdbc(status);
     }
+
+    @GetMapping("/demo/n-plus-one")
+    public List<TripDto> nPlusOneDemo() {
+        return service.getNPlusOneDemo();
+    }
+
+    @GetMapping("/demo/optimized")
+    public List<TripDto> optimizedDemo() {
+        return service.getOptimizedDemo();
+    }
+
+    @GetMapping("/paged")
+    public Page<TripDto> getPaged(@PageableDefault(size = 20) Pageable pageable) {
+        return service.getPagedTrips(pageable);
+    }
 }
+

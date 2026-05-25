@@ -20,6 +20,7 @@
             <column name="status" type="VARCHAR(20)"/>
         </createTable>
     </changeSet>
+
     <changeSet id="2" author="anatolii">
         <createTable tableName="vehicles">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -38,6 +39,7 @@
             <column name="status" type="VARCHAR(20)"/>
         </createTable>
     </changeSet>
+
     <changeSet id="3" author="anatolii">
         <createTable tableName="trips">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -56,6 +58,7 @@
             <column name="status" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
+
     <changeSet id="4" author="anatolii">
         <createTable tableName="maintenances">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -73,6 +76,7 @@
             <column name="status" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
+
     <changeSet id="5" author="anatolii">
         <createTable tableName="fuel_logs">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -90,4 +94,157 @@
             <column name="refuel_date" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="6" author="anatolii">
+        <createTable tableName="driver_profiles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="driver_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="emergency_contact" type="VARCHAR(255)"/>
+            <column name="medical_certificate" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="anatolii">
+        <createTable tableName="driver_vehicle_assignments">
+            <column name="driver_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vehicle_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="driver_vehicle_assignments"
+                       columnNames="driver_id, vehicle_id"
+                       constraintName="pk_driver_vehicle_assignments"/>
+    </changeSet>
+
+    <changeSet id="8" author="anatolii">
+        <addForeignKeyConstraint baseTableName="trips"
+                                 baseColumnNames="driver_id"
+                                 referencedTableName="drivers"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_trips_drivers"/>
+
+        <addForeignKeyConstraint baseTableName="trips"
+                                 baseColumnNames="vehicle_id"
+                                 referencedTableName="vehicles"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_trips_vehicles"/>
+
+        <addForeignKeyConstraint baseTableName="maintenances"
+                                 baseColumnNames="vehicle_id"
+                                 referencedTableName="vehicles"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_maintenances_vehicles"/>
+
+        <addForeignKeyConstraint baseTableName="fuel_logs"
+                                 baseColumnNames="vehicle_id"
+                                 referencedTableName="vehicles"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fuel_logs_vehicles"/>
+
+        <addForeignKeyConstraint baseTableName="driver_profiles"
+                                 baseColumnNames="driver_id"
+                                 referencedTableName="drivers"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_driver_profiles_drivers"/>
+
+        <addForeignKeyConstraint baseTableName="driver_vehicle_assignments"
+                                 baseColumnNames="driver_id"
+                                 referencedTableName="drivers"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_driver_vehicle_driver"/>
+
+        <addForeignKeyConstraint baseTableName="driver_vehicle_assignments"
+                                 baseColumnNames="vehicle_id"
+                                 referencedTableName="vehicles"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_driver_vehicle_vehicle"/>
+    </changeSet>
+
+    <changeSet id="9" author="anatolii">
+        <sql>
+            INSERT INTO drivers (full_name, license_number, category, status)
+            SELECT
+                'Driver ' || CAST(x AS VARCHAR),
+                'LIC-' || LPAD(CAST(x AS VARCHAR), 4, '0'),
+                CASE MOD(x, 3)
+                    WHEN 0 THEN 'B'
+                    WHEN 1 THEN 'C'
+                    ELSE 'D'
+                    END,
+                CASE MOD(x, 4)
+                    WHEN 0 THEN 'ON_LEAVE'
+                    ELSE 'ACTIVE'
+                    END
+            FROM SYSTEM_RANGE(1, 40);
+
+            INSERT INTO vehicles (make, model, license_plate, manufacture_year, status)
+            SELECT
+                CASE MOD(x, 4)
+                    WHEN 0 THEN 'MAN'
+                    WHEN 1 THEN 'Volvo'
+                    WHEN 2 THEN 'Scania'
+                    ELSE 'DAF'
+                    END,
+                'Model-' || CAST(MOD(x, 10) + 1 AS VARCHAR),
+                'AA-' || LPAD(CAST(x AS VARCHAR), 4, '0'),
+                2005 + MOD(x, 16),
+                CASE MOD(x, 5)
+                    WHEN 0 THEN 'REPAIR'
+                    ELSE 'READY'
+                    END
+            FROM SYSTEM_RANGE(1, 80);
+
+            INSERT INTO driver_profiles (driver_id, emergency_contact, medical_certificate)
+            SELECT
+                d.id,
+                'Contact for ' || d.full_name,
+                'MED-' || LPAD(CAST(d.id AS VARCHAR), 5, '0')
+            FROM drivers d;
+
+            INSERT INTO driver_vehicle_assignments (driver_id, vehicle_id)
+            SELECT d.id, v.id
+            FROM drivers d
+                     JOIN vehicles v ON MOD(d.id + v.id, 9) = 0;
+
+            INSERT INTO trips (route, driver_id, vehicle_id, distance, status)
+            SELECT
+                'Route-' || CAST(x AS VARCHAR),
+                MOD(x - 1, 40) + 1,
+                MOD(x - 1, 80) + 1,
+                20 + MOD(x, 500),
+                CASE MOD(x, 3)
+                    WHEN 0 THEN 'DONE'
+                    WHEN 1 THEN 'IN_PROGRESS'
+                    ELSE 'PLANNED'
+                    END
+            FROM SYSTEM_RANGE(1, 600);
+
+            INSERT INTO fuel_logs (vehicle_id, liters, price_per_liter, refuel_date)
+            SELECT
+                MOD(x - 1, 80) + 1,
+                20 + MOD(x, 70),
+                1.2 + (MOD(x, 25) / 10.0),
+                '2026-04-' || LPAD(CAST(MOD(x, 28) + 1 AS VARCHAR), 2, '0')
+            FROM SYSTEM_RANGE(1, 320);
+
+            INSERT INTO maintenances (vehicle_id, description, cost, status)
+            SELECT
+                MOD(x - 1, 80) + 1,
+                'Maintenance task #' || CAST(x AS VARCHAR),
+                100 + (MOD(x, 200) * 5),
+                CASE MOD(x, 2)
+                    WHEN 0 THEN 'CLOSED'
+                    ELSE 'OPEN'
+                    END
+            FROM SYSTEM_RANGE(1, 240);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
+

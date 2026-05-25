@@ -7,21 +7,36 @@ import jakarta.validation.constraints.NotNull;
 public class TripDto {
     private Long id;
 
-    @NotBlank(message = "Маршрут обов'язковий")
+    @NotBlank(message = "Route is required")
     private String route;
 
-    @NotNull(message = "ID водія обов'язкове")
+    @NotNull(message = "Driver ID is required")
     private Long driverId;
 
-    @NotNull(message = "ID автомобіля обов'язкове")
+    @NotNull(message = "Vehicle ID is required")
     private Long vehicleId;
 
-    @Min(value = 1, message = "Дистанція має бути більшою за 0")
+    @Min(value = 1, message = "Distance must be greater than 0")
     private Integer distance;
 
     private String status;
+    private String driverName;
+    private String vehicleLicensePlate;
 
-    // Геттери та Сеттери
+    public TripDto() {
+    }
+
+    public TripDto(Long id, String route, Long driverId, Long vehicleId, Integer distance, String status, String driverName, String vehicleLicensePlate) {
+        this.id = id;
+        this.route = route;
+        this.driverId = driverId;
+        this.vehicleId = vehicleId;
+        this.distance = distance;
+        this.status = status;
+        this.driverName = driverName;
+        this.vehicleLicensePlate = vehicleLicensePlate;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getRoute() { return route; }
@@ -34,4 +49,9 @@ public class TripDto {
     public void setDistance(Integer distance) { this.distance = distance; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getDriverName() { return driverName; }
+    public void setDriverName(String driverName) { this.driverName = driverName; }
+    public String getVehicleLicensePlate() { return vehicleLicensePlate; }
+    public void setVehicleLicensePlate(String vehicleLicensePlate) { this.vehicleLicensePlate = vehicleLicensePlate; }
 }
+

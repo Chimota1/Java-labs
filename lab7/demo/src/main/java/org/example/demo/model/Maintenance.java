@@ -10,8 +10,9 @@ public class Maintenance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehicle_id", nullable = false)
-    private Long vehicleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
     @Column(nullable = false)
     private String description;
@@ -23,11 +24,10 @@ public class Maintenance {
 
     public Maintenance() {}
 
-    // Геттери та Сеттери
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getVehicleId() { return vehicleId; }
-    public void setVehicleId(Long vehicleId) { this.vehicleId = vehicleId; }
+    public Vehicle getVehicle() { return vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public BigDecimal getCost() { return cost; }
@@ -35,3 +35,4 @@ public class Maintenance {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 }
+

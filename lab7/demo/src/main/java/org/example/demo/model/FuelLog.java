@@ -10,8 +10,9 @@ public class FuelLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vehicle_id", nullable = false)
-    private Long vehicleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
     @Column(nullable = false)
     private Double liters;
@@ -24,11 +25,10 @@ public class FuelLog {
 
     public FuelLog() {}
 
-    // Геттери та Сеттери
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getVehicleId() { return vehicleId; }
-    public void setVehicleId(Long vehicleId) { this.vehicleId = vehicleId; }
+    public Vehicle getVehicle() { return vehicle; }
+    public void setVehicle(Vehicle vehicle) { this.vehicle = vehicle; }
     public Double getLiters() { return liters; }
     public void setLiters(Double liters) { this.liters = liters; }
     public BigDecimal getPricePerLiter() { return pricePerLiter; }
@@ -36,3 +36,4 @@ public class FuelLog {
     public String getRefuelDate() { return refuelDate; }
     public void setRefuelDate(String refuelDate) { this.refuelDate = refuelDate; }
 }
+
